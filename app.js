@@ -1,4 +1,125 @@
-coexpressnst express = require('express')
+/*const express = require('express')
+const path = require('path')
+const {open} = require('sqlite')
+const sqlite3 = require('sqlite3')
+const bcrypt = require('bcrypt')
+const app = express()
+app.use(express.json())
+const jwt = require('jsonwebtoken')
+const dbPath = path.join(__dirname, 'twitterClone.db')
+let db = null
+
+const initializeDBAndServer = async () => {
+  try {
+    db = await open({
+      filename: dbPath,
+      driver: sqlite3.Database,
+    })
+    app.listen(3000, () => {
+      console.log('Server Running at http://localhost:3000/')
+    })
+  } catch (e) {
+    console.log('DB Error: ${e.message}')
+    process.exit(1)
+  }
+}
+initializeDBAndServer()
+
+const authenticateToken = (request, response, next) => {
+  let jwtToken
+  const authHeader = request.headers['authorization']
+  if (authHeader !== undefined) {
+    jwtToken = authHeader.split(' ')[1]
+  }
+  if (jwtToken === undefined) {
+    response.status(401)
+    response.send('Invalid JWT Token')
+  } else {
+    jwt.verify(jwtToken, 'MY_SECRET_TOKEN', async (error, payload) => {
+      if (error) {
+        response.status(401)
+        response.send('Invalid JWT Token')
+      } else {
+        request.username = payload.username
+        next()
+      }
+    })
+  }
+}
+
+app.post('/register/', async (request, response) => {
+  const {username, password, name, gender} = request.body
+  //console.log(request.body)
+  let encryptPass = await bcrypt.hash(password, 10)
+  //console.log(encryptPass)
+  let userCheckQ = `select * from user where username = '${username}'`
+  let result = await db.get(userCheckQ)
+  //console.log(result)
+  if (result === undefined) {
+    if (password.length < 6) {
+      response.status(400)
+      response.send('Password is too short')
+      console.log('Password is too short')
+    } else {
+      let query = `INSERT INTO
+    user (username,password, name,gender)
+    VALUES
+    (
+      '${username}',
+      '${encryptPass}',
+      '${name}',
+      '${gender}'
+    );`
+      let result = await db.run(query)
+      response.status(200)
+      console.log('User created successfully')
+      response.send('User created successfully')
+    }
+  } else {
+    response.status(400)
+    console.log('User already exists')
+    response.send('User already exists')
+  }
+})
+
+//Login API
+app.post('/login/', async (request, response) => {
+  const {username, password} = request.body
+
+  let retrivePassword = `select * from user where username = '${username}'`
+
+  let result = await db.get(retrivePassword)
+
+  if (result === undefined) {
+    response.status(400)
+
+    response.send('Invalid user')
+  } else {
+    let passwordConvert = await bcrypt.compare(password, result.password)
+    if (passwordConvert === true) {
+      response.status(200)
+      const payload = {
+        username: username,
+      }
+      const jwtToken = jwt.sign(payload, 'MY_SECRET_TOKEN')
+      response.send({jwtToken})
+    } else {
+      response.status(404)
+      response.send('Invalid password')
+      console.log('Invalid password')
+    }
+  }
+})
+
+// Latest 4 tweets
+
+app.get('/user/tweets/feed/', authenticateToken, async (request, response) => {
+  console.log("'Let's Go")
+})
+*/
+
+//Babu Code
+const express = require('express')
 const {open} = require('sqlite')
 const sqlite3 = require('sqlite3')
 const path = require('path')
@@ -9,7 +130,6 @@ const app = express()
 app.use(express.json())
 
 const databasePath = path.join(__dirname, 'twitterClone.db')
-expressexpress
 const initializeDbAndStartServer = async () => {
   try {
     database = await open({
@@ -57,7 +177,7 @@ app.post('/login/', async (request, response) => {
   const {username, password} = request.body
 
   const selectUserQuery = `
-    SELECT * FROM user WHERE uusernamesername = '${username}';
+    SELECT * FROM user WHERE username = '${username}';
     `
   const dbUser = await database.get(selectUserQuery)
   if (!dbUser) {
@@ -411,12 +531,11 @@ app.delete('/tweets/:tweetId/', authenticateUser, async (request, response) => {
   if (dbUser.user_id !== tweetInfo.user_id) {
     response.status(401)
     response.send('Invalid Request')
-  } elselseeelselselseeels
-elselseeelselselseeelselselseeelselselsdeleteTweetQuery {
+  } else {
     const deleteTweetQuery = `
       DELETE FROM tweet WHERE tweet_id = ${tweetId};
       `
-    await delsease.run(deleteTweetQuery)
+    await database.run(deleteTweetQuery)
     response.send('Tweet Removed')
   }
 })
